@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Flash Player</title>
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+  <style>
+    body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#111}
+    #container{width:800px;height:600px;background:#000}
+    #controls{position:fixed;top:10px;left:10px;color:#fff;font-family:Arial,system-ui;}
+  </style>
+</head>
+<body>
+
+
+  <div id="container" role="application" aria-label="SWF player">Loading…</div>
+
+  <script>
+    const SWF_URL = "{{ swf_url }}";
+
+    (function waitForRuffle() {
+      if (!window.RufflePlayer) return setTimeout(waitForRuffle, 50);
+
+      try {
+        const ruffle = window.RufflePlayer.newest();
+        ruffle.config = ruffle.config || {};
+        ruffle.config.debug = true;
+        ruffle.config.keyboard = { passthrough: true };
+
+        const player = ruffle.createPlayer();
+        player.style.width = "100%";
+        player.style.height = "100%";
+        player.style.background = "#000";
+
+        const container = document.getElementById("container");
+        container.innerHTML = "";
+        container.appendChild(player);
+
+        // Use documented API to load the SWF by URL
+        player.ruffle().load(SWF_URL);
+        console.log("Loading SWF:", SWF_URL);
+      } catch (err) {
+        console.error("Ruffle init error:", err);
+        document.getElementById("container").textContent = "Ruffle init failed — see console.";
+      }
+    })();
+  </script>
+</body>
+</html>
